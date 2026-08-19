@@ -10,13 +10,13 @@ import { ZenCanvas } from '@/components/zen-canvas';
 
 type Tool = 'bubble' | 'breathing' | 'noise' | 'ball' | 'music' | 'zen';
 
-const TOOLS: { id: Tool; label: string; emoji: string; desc: string }[] = [
-  { id: 'bubble', label: '气泡膜', emoji: '🫧', desc: '点击解压' },
-  { id: 'breathing', label: '呼吸引导', emoji: '🌬', desc: '深呼吸放松' },
-  { id: 'noise', label: '环境音', emoji: '🎵', desc: '自然白噪音' },
-  { id: 'ball', label: '解压球', emoji: '🔮', desc: '挤压释放' },
-  { id: 'music', label: '放松音乐', emoji: '🎹', desc: '五声音阶' },
-  { id: 'zen', label: '禅意画板', emoji: '🎨', desc: '自由涂画' },
+const TOOLS: { id: Tool; label: string; emoji: string }[] = [
+  { id: 'bubble', label: '气泡膜', emoji: '🫧' },
+  { id: 'breathing', label: '呼吸引导', emoji: '🌬️' },
+  { id: 'noise', label: '环境音', emoji: '🎵' },
+  { id: 'ball', label: '解压球', emoji: '🔮' },
+  { id: 'music', label: '放松音乐', emoji: '🎹' },
+  { id: 'zen', label: '禅意画板', emoji: '🎨' },
 ];
 
 export default function Home() {
@@ -41,93 +41,101 @@ export default function Home() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden" style={{ background: 'linear-gradient(160deg, oklch(0.98 0.008 290), oklch(0.97 0.006 80), oklch(0.98 0.005 200))' }}>
-      {/* 背景装饰光晕 */}
+    <div
+      className="min-h-screen w-full relative overflow-hidden"
+      style={{
+        background: 'linear-gradient(170deg, oklch(0.97 0.015 240) 0%, oklch(0.98 0.008 220) 30%, oklch(0.98 0.006 200) 60%, oklch(0.97 0.012 240) 100%)',
+      }}
+    >
+      {/* 背景装饰 */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* 顶部光晕 */}
         <div
-          className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full"
+          className="absolute -top-40 right-0 w-[500px] h-[500px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, oklch(0.88 0.06 290 / 0.25), transparent 70%)',
+            background: 'radial-gradient(circle, oklch(0.92 0.04 240 / 0.3), transparent 70%)',
             animation: 'float 20s ease-in-out infinite',
           }}
         />
+        {/* 左下光晕 */}
         <div
           className="absolute -bottom-32 -left-32 w-[450px] h-[450px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, oklch(0.88 0.05 160 / 0.2), transparent 70%)',
+            background: 'radial-gradient(circle, oklch(0.92 0.03 200 / 0.25), transparent 70%)',
             animation: 'float 25s ease-in-out infinite reverse',
           }}
         />
+        {/* 中间微光 */}
         <div
-          className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full"
+          className="absolute top-1/3 left-1/3 w-[350px] h-[350px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, oklch(0.90 0.04 340 / 0.15), transparent 70%)',
+            background: 'radial-gradient(circle, oklch(0.94 0.025 260 / 0.15), transparent 70%)',
             animation: 'float 30s ease-in-out infinite',
           }}
         />
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen max-w-2xl mx-auto">
-        {/* 顶部标题栏 */}
-        <header className="flex items-center justify-center pt-8 pb-4 px-4">
+        {/* 顶部标题 */}
+        <header className="flex items-center justify-center pt-8 pb-3 px-4">
           <div className="text-center">
             <h1
-              className="text-4xl font-extralight tracking-[0.2em]"
+              className="text-4xl font-extralight tracking-[0.25em]"
               style={{
-                color: 'oklch(0.35 0.06 290)',
-                textShadow: '0 2px 10px oklch(0.75 0.08 290 / 0.15)',
+                color: 'oklch(0.38 0.08 240)',
+                textShadow: '0 2px 12px oklch(0.75 0.06 240 / 0.12)',
               }}
             >
               解压空间
             </h1>
             <div
-              className="mt-2 mx-auto w-16 h-px"
-              style={{ background: 'linear-gradient(90deg, transparent, oklch(0.75 0.08 290 / 0.5), transparent)' }}
+              className="mt-2 mx-auto w-20 h-px"
+              style={{ background: 'linear-gradient(90deg, transparent, oklch(0.78 0.06 240 / 0.4), transparent)' }}
             />
-            <p className="text-xs mt-2 tracking-wider" style={{ color: 'oklch(0.58 0.03 290)' }}>
+            <p className="text-[11px] mt-2 tracking-widest" style={{ color: 'oklch(0.58 0.04 240)' }}>
               放慢脚步，给自己片刻宁静
             </p>
           </div>
         </header>
 
-        {/* 工具导航 - 卡片式 */}
+        {/* 工具导航 */}
         <nav className="flex justify-center px-4 pb-5">
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 w-full max-w-lg">
+          <div
+            className="grid grid-cols-6 gap-1.5 p-2 rounded-2xl w-full max-w-lg"
+            style={{
+              background: 'oklch(0.98 0.008 240 / 0.7)',
+              backdropFilter: 'blur(12px)',
+              boxShadow: '0 2px 12px oklch(0.88 0.02 240 / 0.15)',
+              border: '1px solid oklch(0.95 0.01 240 / 0.5)',
+            }}
+          >
             {TOOLS.map(tool => {
               const isActive = activeTool === tool.id;
               return (
                 <button
                   key={tool.id}
                   onClick={() => setActiveTool(tool.id)}
-                  className="flex flex-col items-center gap-1 py-3 px-2 rounded-2xl transition-all duration-300 cursor-pointer group"
+                  className="flex flex-col items-center gap-0.5 py-2.5 px-1 rounded-xl transition-all duration-300 cursor-pointer"
                   style={{
                     background: isActive
-                      ? 'linear-gradient(145deg, oklch(0.92 0.04 290), oklch(0.88 0.05 310))'
-                      : 'oklch(0.98 0.005 290 / 0.6)',
+                      ? 'linear-gradient(145deg, oklch(0.90 0.05 240), oklch(0.87 0.06 230))'
+                      : 'transparent',
                     boxShadow: isActive
-                      ? '0 4px 16px oklch(0.75 0.08 290 / 0.2), inset 0 1px 0 oklch(0.98 0.01 290 / 0.5)'
-                      : '0 1px 3px oklch(0.88 0 0 / 0.2)',
-                    transform: isActive ? 'translateY(-2px)' : 'translateY(0)',
-                    border: isActive
-                      ? '1px solid oklch(0.82 0.06 290 / 0.4)'
-                      : '1px solid oklch(0.94 0.01 290 / 0.5)',
+                      ? '0 3px 12px oklch(0.72 0.08 240 / 0.2), inset 0 1px 0 oklch(0.98 0.01 240 / 0.4)'
+                      : 'none',
+                    transform: isActive ? 'translateY(-1px)' : 'translateY(0)',
                   }}
                 >
                   <span
-                    className="text-xl transition-transform duration-300"
-                    style={{
-                      transform: isActive ? 'scale(1.15)' : 'scale(1)',
-                      filter: isActive ? 'none' : 'grayscale(0.3)',
-                    }}
+                    className="text-lg transition-transform duration-300"
+                    style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)' }}
                   >
                     {tool.emoji}
                   </span>
                   <span
-                    className="text-[11px] font-medium transition-colors duration-300"
+                    className="text-[10px] font-medium transition-colors duration-300"
                     style={{
-                      color: isActive
-                        ? 'oklch(0.35 0.05 290)'
-                        : 'oklch(0.55 0.02 280)',
+                      color: isActive ? 'oklch(0.35 0.06 240)' : 'oklch(0.55 0.03 240)',
                     }}
                   >
                     {tool.label}
@@ -143,10 +151,10 @@ export default function Home() {
           <div
             className="w-full rounded-3xl p-6 sm:p-8"
             style={{
-              background: 'oklch(0.99 0.003 80 / 0.85)',
+              background: 'oklch(0.99 0.005 240 / 0.8)',
               backdropFilter: 'blur(20px)',
-              boxShadow: '0 8px 40px oklch(0.85 0.01 290 / 0.15), 0 1px 3px oklch(0.88 0 0 / 0.1)',
-              border: '1px solid oklch(0.95 0.01 290 / 0.6)',
+              boxShadow: '0 8px 40px oklch(0.88 0.02 240 / 0.12), 0 1px 3px oklch(0.90 0 0 / 0.08)',
+              border: '1px solid oklch(0.96 0.008 240 / 0.5)',
             }}
           >
             {renderTool()}
@@ -155,7 +163,7 @@ export default function Home() {
 
         {/* 底部 */}
         <footer className="text-center py-5">
-          <p className="text-[11px] tracking-wider" style={{ color: 'oklch(0.68 0.02 290)' }}>
+          <p className="text-[11px] tracking-widest" style={{ color: 'oklch(0.68 0.03 240)' }}>
             深呼吸，一切都会好起来的
           </p>
         </footer>
