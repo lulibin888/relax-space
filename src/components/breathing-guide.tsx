@@ -51,7 +51,6 @@ export function BreathingGuide() {
         const config = PHASE_CONFIG[phaseKey];
 
         if (prev + 1 >= config.duration) {
-          // 进入下一阶段
           const nextIndex = (phaseIndexRef.current + 1) % pattern.length;
           phaseIndexRef.current = nextIndex;
           const nextPhase = pattern[nextIndex];
@@ -76,14 +75,23 @@ export function BreathingGuide() {
   const phaseConfig = currentPhase !== 'idle' ? PHASE_CONFIG[currentPhase] : null;
   const progress = phaseConfig ? phaseTime / phaseConfig.duration : 0;
 
-  // 圆圈动画比例
   const getCircleScale = () => {
     switch (currentPhase) {
-      case 'inhale': return 0.6 + progress * 0.4;
+      case 'inhale': return 0.55 + progress * 0.45;
       case 'hold': return 1;
-      case 'exhale': return 1 - progress * 0.4;
-      case 'rest': return 0.6;
-      default: return 0.6;
+      case 'exhale': return 1 - progress * 0.45;
+      case 'rest': return 0.55;
+      default: return 0.55;
+    }
+  };
+
+  const getCircleColor = () => {
+    switch (currentPhase) {
+      case 'inhale': return 'oklch(0.78 0.10 290)';
+      case 'hold': return 'oklch(0.75 0.08 320)';
+      case 'exhale': return 'oklch(0.78 0.08 200)';
+      case 'rest': return 'oklch(0.80 0.06 160)';
+      default: return 'oklch(0.82 0.04 290)';
     }
   };
 
@@ -94,12 +102,12 @@ export function BreathingGuide() {
   ];
 
   return (
-    <div className="flex flex-col items-center gap-6 w-full">
+    <div className="flex flex-col items-center gap-5 w-full">
       <div className="text-center">
-        <h2 className="text-2xl font-light tracking-wide text-[oklch(0.35_0.02_280)]">
+        <h2 className="text-xl font-light tracking-wide" style={{ color: 'oklch(0.30 0.04 290)' }}>
           呼吸引导
         </h2>
-        <p className="text-sm text-[oklch(0.55_0.02_280)] mt-1">
+        <p className="text-xs mt-1" style={{ color: 'oklch(0.55 0.03 290)' }}>
           跟随节奏，深呼吸放松身心
         </p>
       </div>
@@ -110,11 +118,19 @@ export function BreathingGuide() {
           <button
             key={i}
             onClick={() => { if (!isRunning) setPattern([...p.value]); }}
-            className={`px-3 py-1.5 rounded-full text-xs transition-all duration-300 cursor-pointer ${
-              JSON.stringify(pattern) === JSON.stringify([...p.value])
-                ? 'bg-[oklch(0.85_0.06_290)] text-[oklch(0.35_0.04_290)]'
-                : 'bg-[oklch(0.95_0.01_290)] text-[oklch(0.55_0.02_280)] hover:bg-[oklch(0.92_0.02_290)]'
-            }`}
+            className="px-3 py-1.5 rounded-full text-[11px] transition-all duration-300 cursor-pointer"
+            style={{
+              background: JSON.stringify(pattern) === JSON.stringify([...p.value])
+                ? 'linear-gradient(135deg, oklch(0.85 0.06 290), oklch(0.82 0.05 310))'
+                : 'oklch(0.96 0.01 290)',
+              color: JSON.stringify(pattern) === JSON.stringify([...p.value])
+                ? 'oklch(0.35 0.04 290)'
+                : 'oklch(0.55 0.02 280)',
+              boxShadow: JSON.stringify(pattern) === JSON.stringify([...p.value])
+                ? '0 2px 8px oklch(0.75 0.08 290 / 0.2)'
+                : 'none',
+              border: '1px solid oklch(0.90 0.02 290 / 0.5)',
+            }}
           >
             {p.name}
           </button>
@@ -122,42 +138,47 @@ export function BreathingGuide() {
       </div>
 
       {/* 呼吸引导圆 */}
-      <div className="relative flex items-center justify-center w-64 h-64">
-        {/* 外圈装饰 */}
-        <div
-          className="absolute inset-0 rounded-full transition-all duration-1000"
-          style={{
-            background: `radial-gradient(circle, oklch(0.90_0.04_290 / ${isRunning ? 0.3 : 0.1}), transparent)`,
-          }}
-        />
+      <div className="relative flex items-center justify-center w-56 h-56">
+        {/* 外圈脉冲 */}
+        {isRunning && (
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              border: `2px solid ${getCircleColor()} / 0.2`,
+              animation: 'pulse 4s ease-in-out infinite',
+            }}
+          />
+        )}
         {/* 主圆 */}
         <div
-          className="rounded-full flex items-center justify-center transition-all"
+          className="rounded-full flex items-center justify-center"
           style={{
             width: `${getCircleScale() * 100}%`,
             height: `${getCircleScale() * 100}%`,
             background: isRunning
-              ? `radial-gradient(circle, oklch(0.85_0.08_290 / 0.6), oklch(0.78_0.1_290 / 0.3))`
-              : 'radial-gradient(circle, oklch(0.90_0.04_290 / 0.3), oklch(0.85_0.02_290 / 0.1))',
+              ? `radial-gradient(circle at 40% 35%, ${getCircleColor()} / 0.3, ${getCircleColor()} / 0.15)`
+              : 'radial-gradient(circle, oklch(0.92 0.03 290 / 0.3), oklch(0.88 0.02 290 / 0.1))',
             transitionDuration: currentPhase === 'inhale' ? '4000ms' :
                                currentPhase === 'exhale' ? '6000ms' : '500ms',
+            transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
             boxShadow: isRunning
-              ? '0 0 60px oklch(0.75_0.1_290 / 0.3), inset 0 0 30px oklch(0.85_0.06_290 / 0.3)'
-              : 'none',
+              ? `0 0 50px ${getCircleColor()} / 0.25, inset 0 0 25px oklch(0.90 0.04 290 / 0.3)`
+              : '0 0 20px oklch(0.85 0.02 290 / 0.1)',
+            border: isRunning ? `1px solid ${getCircleColor()} / 0.3` : '1px solid oklch(0.90 0.02 290 / 0.3)',
           }}
         >
           <div className="text-center">
             {isRunning && phaseConfig ? (
               <>
-                <p className="text-3xl font-light text-[oklch(0.40_0.04_290)]">
+                <p className="text-2xl font-light" style={{ color: 'oklch(0.35 0.05 290)' }}>
                   {phaseConfig.label}
                 </p>
-                <p className="text-sm text-[oklch(0.55_0.04_290)] mt-1">
+                <p className="text-sm mt-1 font-light" style={{ color: 'oklch(0.55 0.04 290)' }}>
                   {phaseConfig.duration - phaseTime}
                 </p>
               </>
             ) : (
-              <p className="text-lg font-light text-[oklch(0.55_0.02_280)]">
+              <p className="text-base font-light" style={{ color: 'oklch(0.55 0.03 290)' }}>
                 准备好了吗
               </p>
             )}
@@ -167,14 +188,14 @@ export function BreathingGuide() {
 
       {/* 提示文字 */}
       {isRunning && phaseConfig && (
-        <p className="text-sm text-[oklch(0.55_0.04_290)] text-center animate-in fade-in duration-500">
+        <p className="text-xs text-center" style={{ color: 'oklch(0.55 0.04 290)', animation: 'fadeIn 0.5s ease-out' }}>
           {phaseConfig.instruction}
         </p>
       )}
 
       {/* 循环计数 */}
       {cycleCount > 0 && (
-        <p className="text-xs text-[oklch(0.60_0.02_280)]">
+        <p className="text-[11px]" style={{ color: 'oklch(0.60 0.03 290)' }}>
           已完成 {cycleCount} 个循环
         </p>
       )}
@@ -185,8 +206,11 @@ export function BreathingGuide() {
         className="px-8 py-3 rounded-full text-sm font-medium text-white transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
         style={{
           background: isRunning
-            ? 'linear-gradient(135deg, oklch(0.65_0.08_10), oklch(0.60_0.06_10))'
-            : 'linear-gradient(135deg, oklch(0.70_0.1_290), oklch(0.68_0.08_320))',
+            ? 'linear-gradient(135deg, oklch(0.62 0.10 10), oklch(0.58 0.08 10))'
+            : 'linear-gradient(135deg, oklch(0.65 0.12 290), oklch(0.60 0.10 320))',
+          boxShadow: isRunning
+            ? '0 4px 15px oklch(0.62 0.10 10 / 0.3)'
+            : '0 4px 15px oklch(0.65 0.10 290 / 0.3)',
         }}
       >
         {isRunning ? '结束' : '开始呼吸'}
